@@ -1,0 +1,121 @@
+/*
+   GLOBAL
+*/
+
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f4f4f4;
+    font-family: 'Poppins', sans-serif;
+}
+
+/*
+   CARD CONTAINER
+*/
+
+.container {
+    width: 380px;
+    padding: 40px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border-top: 6px solid #e60000; /* red highlight */
+}
+
+/*
+   TITLE
+*/
+
+h1 {
+    margin-bottom: 30px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #e60000;
+}
+
+/*
+   INPUT FIELDS
+*/
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s ease;
+    box-sizing: border-box;
+}
+
+input:focus {
+    border: 1px solid #e60000;
+    box-shadow: 0 0 6px rgba(230, 0, 0, 0.3);
+}
+
+/*
+   BUTTON
+*/
+
+input[type="submit"] {
+    background: #e60000;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 15px;
+    border: none;
+    transition: 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background: #cc0000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(230, 0, 0, 0.3);
+}
+
+/*
+   LINKS
+*/
+
+a {
+    display: block;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #e60000;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/*
+   MESSAGES
+*/
+
+.flash-success {
+    background: #ffe6e6;
+    color: #cc0000;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    border-left: 4px solid #e60000;
+}
+
+.flash-error {
+    background: #fff0f0;
+    color: #b30000;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    border-left: 4px solid #cc0000;
+}
+
+
