@@ -1,15 +1,20 @@
 🔐 Flask Authentication System
 
+
 A secure user authentication system built using Flask.
 This project demonstrates registration, login, password hashing, session management, and SQLite database integration following basic security best practices.
 
+
 📌 Project Description
+
 
 The Flask Authentication System is a beginner-friendly yet secure web application that allows users to create accounts and log in safely.
 
 It implements password hashing, flash messaging, and session handling to ensure user data is protected. The project structure is organized and easy to understand, making it ideal for learning Flask authentication workflows.
 
+
 🚀 Features
+
 
 User Registration
 
@@ -39,9 +44,12 @@ SQLite
 
 Werkzeug Security
 
+
 Git
 
+
 📂 Project Structure
+
 flask-authentication-system/
 │
 ├── app.py
@@ -56,6 +64,9 @@ flask-authentication-system/
 │   └── dashboard.html
 │
 └── database.db
+
+
+
 
 ⚙️ Installation & Usage
 1️⃣ Clone the Repository
@@ -143,7 +154,11 @@ Protects against brute-force attacks
 
 Can be implemented using Flask-Limiter
 
+
+
 Screen shorts:
+
+
 
 <img width="1177" height="818" alt="Screenshot 2026-02-17 115921" src="https://github.com/user-attachments/assets/38b298f5-909f-4451-995f-c16bf16775fe" />
 
@@ -152,6 +167,7 @@ Screen shorts:
 <img width="849" height="740" alt="Screenshot 2026-02-17 115947" src="https://github.com/user-attachments/assets/d3db433c-05de-4bfe-a63e-f04b42d6a000" />
 
 
-👨‍💻 Author
 
+
+👨‍💻 Author :
 Muhammed Zayan.T
