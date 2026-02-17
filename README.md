@@ -166,7 +166,8 @@ Protects against brute-force attacks
 Implemented using Flask-Limiter
 
 📸 Screenshots
-<img width="1177" height="818" alt="Register Page" src="https://github.com/user-attachments/assets/38b298f5-909f-4451-995f-c16bf16775fe" /> <br> <img width="849" height="740" alt="Login Page" src="https://github.com/user-attachments/assets/91d74e21-5b36-4c7b-a15d-117d0a2d0bcf" /> <br> <img width="849" height="740" alt="Dashboard Page" src="https://github.com/user-attachments/assets/d3db433c-05de-4bfe-a63e-f04b42d6a000" />
+<img width="1177" height="818" alt="Register Page" src="https://github.com/user-attachments/assets/38b298f5-909f-4451-995f-c16bf16775fe" /> <br> <img width="849" height="740" alt="Login Page" src="https://github.com/user-attachments/assets/91d74e21-5b36-4c7b-a15d-117d0a2d0bcf" /> <br><img width="1184" height="687" alt="Screenshot 2026-02-17 120019" src="https://github.com/user-attachments/assets/32a3f36e-c854-4752-9363-014da2ec29a8" />
+
 👨‍💻 Author
 
 Muhammed Zayan.T
