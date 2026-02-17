@@ -9,7 +9,9 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 from wtforms.validators import Regexp
 from flask_limiter import Limiter
+from flask import session
 from flask_limiter.util import get_remote_address
+from flask_login import current_user
 import os
 
 app = Flask(__name__)
@@ -27,6 +29,11 @@ limiter = Limiter(
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax'
+)
 
 # MAIL CONFIG
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -150,7 +157,9 @@ class LoginForm(FlaskForm):
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+     if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+     return render_template('home.html')
 
 
 @app.route('/dashboard')
@@ -163,6 +172,7 @@ def dashboard():
 @login_required
 def logout():
     logout_user()
+    session.clear()
     return redirect(url_for('login'))
 
 
@@ -171,6 +181,9 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 @limiter.limit("3 per minute")
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+
     form = RegisterForm()
 
     if form.validate_on_submit():
@@ -240,6 +253,10 @@ def verify_email(token):
 @app.route('/login', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
 def login():
+
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -286,9 +303,13 @@ def login():
 
     return render_template('login.html', form=form)
 
+
+
 @app.after_request
 def add_no_cache_headers(response):
-    response.headers["Cache-Control"] = "no-store"
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
     return response
 
 
@@ -301,3 +322,4 @@ if __name__ == '__main__':
         db.create_all()
 
     app.run(debug=True)
+
