@@ -28,7 +28,7 @@ limiter = Limiter(
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SECRET_KEY'] = 'thisisasecretkey'
+app.config['SECRET_KEY'] ='thisisasecretkey'
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
@@ -40,7 +40,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'mmhdzayant@gmail.com'
-app.config['MAIL_PASSWORD'] = os.environ.get("MAIL_PASSWORD")
+app.config['MAIL_PASSWORD'] ='ypdjzhklqhxuaosn'
 app.config['MAIL_DEFAULT_SENDER'] = 'mmhdzayant@gmail.com'
 
 
@@ -150,7 +150,33 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
+# FORGOT PASSWORD FORM
 
+class ForgotPasswordForm(FlaskForm):
+    email = StringField(
+        validators=[InputRequired(), Email()],
+        render_kw={"placeholder": "Enter your registered email"}
+    )
+    submit = SubmitField("Send Reset Link")
+
+
+
+    # RESET PASSWORD FORM
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField(
+        validators=[
+            InputRequired(),
+            Length(min=8, max=20),
+            Regexp(
+                r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).+$',
+                message="Password must contain uppercase, lowercase, number, and special character."
+            )
+        ],
+        render_kw={"placeholder": "New Password"}
+    )
+
+    submit = SubmitField("Reset Password")
 
 # ROUTES
 
@@ -221,6 +247,85 @@ def register():
 
 
 
+@app.route('/forgot-password', methods=['GET', 'POST'])
+@limiter.limit("3 per minute")
+def forgot_password():
+
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+
+    form = ForgotPasswordForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+
+        # IMPORTANT: Don't reveal if email exists
+        if user:
+            token = serializer.dumps(user.email, salt='password-reset')
+            link = url_for('reset_password', token=token, _external=True)
+
+            msg = Message(
+                'Password Reset Request',
+                recipients=[user.email]
+            )
+
+            msg.body = f'Click this link to reset your password:\n{link}'
+            mail.send(msg)
+
+        flash("If this email is registered, a reset link has been sent.")
+        return redirect(url_for('login'))
+
+    return render_template('forgot_password.html', form=form)
+
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+
+    try:
+        email = serializer.loads(
+            token,
+            salt='password-reset',
+            max_age=3600  # 1 hour expiry
+        )
+    except:
+        flash("Reset link is invalid or expired.")
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("Invalid reset request.")
+        return redirect(url_for('login'))
+
+    form = ResetPasswordForm()
+
+    if form.validate_on_submit():
+
+        hashed_password = bcrypt.generate_password_hash(
+            form.password.data
+        ).decode('utf-8')
+
+        user.password = hashed_password
+
+        # Optional: unlock account after reset
+        user.failed_attempts = 0
+        user.is_locked = False
+
+        db.session.commit()
+
+        flash("Password reset successful! You can now login.")
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html', form=form)
+
+
+
+@app.route('/portfolio')
+@login_required
+def portfolio():
+    return render_template('portfolio.html')
+
+
 # EMAIL VERIFICATION
 
 
@@ -246,16 +351,12 @@ def verify_email(token):
     return redirect(url_for('login'))
 
 
-
-# LOGIN
-
-
 @app.route('/login', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
 def login():
 
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('portfolio'))  # redirect if already logged in
 
     form = LoginForm()
 
@@ -266,15 +367,12 @@ def login():
 
         if user:
 
-            
             if user.is_locked:
                 flash("Account locked due to too many failed attempts.")
                 return redirect(url_for('login'))
 
-            
             if bcrypt.check_password_hash(user.password, form.password.data):
 
-                
                 user.failed_attempts = 0
                 db.session.commit()
 
@@ -283,16 +381,14 @@ def login():
                     return redirect(url_for('login'))
 
                 login_user(user)
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('portfolio'))  # 🔥 HERE
 
             else:
-                
                 user.failed_attempts += 1
 
                 if user.failed_attempts >= 5:
                     user.is_locked = True
                     flash("Account locked due to too many failed attempts.")
-
                 else:
                     flash("Invalid username or password.")
 
@@ -302,6 +398,8 @@ def login():
             flash("Invalid username or password.")
 
     return render_template('login.html', form=form)
+
+
 
 
 
@@ -322,4 +420,3 @@ if __name__ == '__main__':
         db.create_all()
 
     app.run(debug=True)
-
